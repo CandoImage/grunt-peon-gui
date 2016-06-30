@@ -153,7 +153,7 @@
     };
 
     _Class.prototype.connect = function(wsPort) {
-      this.socket = new WebSocket("ws://localhost:" + wsPort, 'echo-protocol');
+      this.socket = new WebSocket("ws://" + window.location.hostname + (":" + wsPort), 'echo-protocol');
       this.socket.onopen = this.handleSocketOpen;
       this.socket.onmessage = this.handleSocketMessage;
       this.socket.onclose = this.handleSocketClose;
