@@ -37,7 +37,7 @@
         "grunt-contrib-compass": "0.1.x",
         "grunt-contrib-coffee": "0.6.x",
         "grunt-contrib-jshint": "0.3.x",
-        "grunt-contrib-nodeunit": "0.1.x",
+        "grunt-contrib-nodeunit": "1.0.x",
         "grunt-contrib-watch": "0.3.x",
         "grunt-coffeelint": "0.0.6",
         "grunt-contrib-jst": "latest",
