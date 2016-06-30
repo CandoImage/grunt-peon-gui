@@ -116,7 +116,7 @@ PeonGUI = class
     console.log(error)
 
   connect: (wsPort) ->
-    @socket = new WebSocket("ws://localhost:#{wsPort}", 'echo-protocol')
+    @socket = new WebSocket("ws://" + window.location.hostname + ":#{wsPort}", 'echo-protocol')
     @socket.onopen = @handleSocketOpen
     @socket.onmessage = @handleSocketMessage
     @socket.onclose = @handleSocketClose
