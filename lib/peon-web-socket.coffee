@@ -51,7 +51,7 @@ class PeonWebSocket
   startWorker: ()->
     ps = require('portscanner')
     that = @
-    ps.findAPortNotInUse(61750, 61755, 'localhost', (err, port) ->
+    ps.findAPortNotInUse(61750, 61750, 'localhost', (err, port) ->
       that.projectPort = port
       PeonGUIServer = require('../lib/peon-gui-server')
       new PeonGUIServer(that).run()

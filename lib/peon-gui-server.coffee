@@ -8,8 +8,8 @@ class PeonGUIServer
   sServer = connect.static
   path = require('path')
   server: false
-  startPort = 8080
-  endPort = 8088
+  startPort = 8888
+  endPort = 8888
   onPort : 0
 
   ###
