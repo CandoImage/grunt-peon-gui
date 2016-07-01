@@ -109,7 +109,10 @@ PeonGUI = class
       eventData.action isnt 'done'
         tmplData =
           time: new Date().toString().split(' ')[4]
-          message: eventMessage.replace(/(\[\d+m)/gi, "")
+          # We use jQUery to set the message as text and fetch it with the
+          # encoded html entities. XSS protection.
+          message: jQuery("<div/>").text(eventMessage.replace(/(\[\d+m)/gi, "")).html();
+
         $html.output.prepend(guiTmpls.outputLog(tmplData))
     else
       console.log event

@@ -138,7 +138,7 @@
         if (eventMessage.length > 1 && eventData.action !== 'connected' && eventData.action !== 'done') {
           tmplData = {
             time: new Date().toString().split(' ')[4],
-            message: eventMessage.replace(/(\[\d+m)/gi, "")
+            message: jQuery("<div/>").text(eventMessage.replace(/(\[\d+m)/gi, "")).html()
           };
           return $html.output.prepend(guiTmpls.outputLog(tmplData));
         }
