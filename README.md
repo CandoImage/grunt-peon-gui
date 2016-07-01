@@ -23,15 +23,16 @@ _Run this task with the `grunt gui` command._
 
 ## Use another gruntfile
 You can install the GUI in a dedicated directory and run another gruntfile using
-two ways:
+three ways:
 
- 1. Pass the command line argument `--guigruntfile=/path/to/file`
- 2. Add configuration to the gruntfile: 
+ 1. Pass the command line argument `--guigruntfile=/path/to/file/Gruntfile.js`
+ 2. Pass the command line argument `--guigruntfolder=/path/to/file/` - searches for Gruntfile.js / Gruntfile.coffee
+ 3. Add configuration to the gruntfile: 
  
     ```js
      gui:
        options:
-         gruntfile: '/path/to/file'
+         gruntfile: '/path/to/file/Gruntfile.js'
     ```
 
 ## Release History

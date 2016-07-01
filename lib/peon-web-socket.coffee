@@ -1,5 +1,6 @@
 class PeonWebSocket
-  grunt = require "grunt"
+  grunt = require("grunt")
+  findup = require('findup-sync')
   child_process = require("child_process")
   path = require("path")
   pkg: require(process.cwd() + '/package.json')
@@ -24,10 +25,21 @@ class PeonWebSocket
       gfp = grunt.config.get('gui.options.gruntfile')
     else if grunt.option('guigruntfile')
       gfp = grunt.option('guigruntfile')
+    else if grunt.option('guigruntfolder')
+      grunt.log.writeln(
+        "Search folder for gruntfile: " + grunt.option('guigruntfolder')
+      )
+      gfp = findup(
+        'Gruntfile.{js,coffee}',
+        {
+          nocase: true,
+          cwd: grunt.option('guigruntfolder')
+        }
+      )
     else if grunt.option('gruntfile')
       gfp = grunt.option('gruntfile')
     else
-      gfp = grunt.file.findup('Gruntfile.{js,coffee}', {nocase: true})
+      gfp = findup('Gruntfile.{js,coffee}', {nocase: true})
 
     @gruntFilePath = gfp
 

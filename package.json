@@ -50,6 +50,7 @@
     "dependencies": {
         "websocket": "~1.0.x",
         "portscanner": "~0.1.x",
-        "connect": "2.7.x"
+        "connect": "2.7.x",
+        "findup-sync": "^0.4.1"
     }
 }
