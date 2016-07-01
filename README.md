@@ -21,8 +21,21 @@ grunt.loadNpmTasks('grunt-peon-gui');
 ## GUI task
 _Run this task with the `grunt gui` command._
 
+## Use another gruntfile
+You can install the GUI in a dedicated directory and run another gruntfile using
+two ways:
+
+ 1. Pass the command line argument `--guigruntfile=/path/to/file`
+ 2. Add configuration to the gruntfile: 
+ 
+    ```js
+     gui:
+       options:
+         gruntfile: '/path/to/file'
+    ```
 
 ## Release History
+ * 2016-07-01 - v1.0.x - Enable the usage of another grunt file for execution.
  * 2014-02-00 - v1.0.1 - Bugfix for passing CLI args.
  * 2013-11-01 - v1.0.0 - Update to Bootstrap v3. New theme. Support for CoffeeScript gruntfiles.
  * 2013-10-31 - v0.5.0 - Cleanup.

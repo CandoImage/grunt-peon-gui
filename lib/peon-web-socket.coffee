@@ -22,6 +22,8 @@ class PeonWebSocket
     # option if not, scan the current working directory for the file.
     if @grunt.config.get('gui.options.gruntfile')
       gfp = grunt.config.get('gui.options.gruntfile')
+    else if grunt.option('guigruntfile')
+      gfp = grunt.option('guigruntfile')
     else if grunt.option('gruntfile')
       gfp = grunt.option('gruntfile')
     else
@@ -29,19 +31,21 @@ class PeonWebSocket
 
     @gruntFilePath = gfp
 
-    grunt.log.writeln("Use grunt file: " + gfp);
+    grunt.log.writeln("Use gruntfile: " + gfp)
 
     @readTasks()
     @removeTasks(['gui'])
     #@addConfigToTasks()
 
   readTasks: () ->
-    #grunt.log.writeln('grunt --help --gruntfile ' + @gruntFilePath);
-    outBuffer = child_process.execSync('grunt --help --gruntfile ' + @gruntFilePath);
+    #grunt.log.writeln('grunt --help --gruntfile ' + @gruntFilePath)
+    outBuffer = child_process.execSync(
+      'grunt --help --gruntfile ' + @gruntFilePath
+    )
     grunt_config = outBuffer.toString().split("\n")
-    tasksArea = false;
-    pattern = /^\s*([^\s]{1,}?)\s{2}.*[^\*]$/;
-    @tasks = {};
+    tasksArea = false
+    pattern = /^\s*([^\s]{1,}?)\s{2}.*[^\*]$/
+    @tasks = {}
     that = @
     grunt_config.forEach((value) ->
       if (tasksArea && value.length == 0)
@@ -49,12 +53,12 @@ class PeonWebSocket
 
       if (tasksArea)
         # TRIM to ensure we don't have a random number of spaces at the end.
-        value = value.replace(/\s+$/, '');
+        value = value.replace(/\s+$/, '')
         if ((result = pattern.exec(value)))
-          that.tasks[result[1]] = {name: result[1], config: "No Conf"};
+          that.tasks[result[1]] = {name: result[1], config: "No Conf"}
 
       if (value.indexOf('Available tasks') > -1)
-        tasksArea = true;
+        tasksArea = true
     )
 
   addConfigToTasks: () ->
@@ -73,10 +77,10 @@ class PeonWebSocket
     )
 
   killWorkers: () ->
-    grunt.log.writeln("Shutdown - start cleanup");
+    grunt.log.writeln("Shutdown - start cleanup")
     if @workers
       @workers.forEach((worker) ->
-        grunt.log.writeln("Kill worker: " + worker.pid);
+        grunt.log.writeln("Kill worker: " + worker.pid)
         process.kill(worker)
       )
     process.exit()

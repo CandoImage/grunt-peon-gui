@@ -29,6 +29,9 @@ class PeonGUIServer
     that = @
     workerPort = @worker.getSocket()
     ps.findAPortNotInUse(startPort, endPort, 'localhost', (err, port) ->
+      if (err)
+        grunt.log.writeln "Error: " + err
+
       that.onPort = port
       appPath = path.resolve(__dirname, '../app')
       that.server = connect.createServer(sServer(appPath))
