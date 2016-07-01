@@ -13,6 +13,9 @@ PeonGUI = class
     output: $("#output")
     notice: $("#notice")
     killAll: $("#kill-all")
+    flagForce: $("#action-flag-force")
+    flagDebug: $("#action-flag-debug")
+    flagVerbose: $("#action-flag-verbose")
   running: false
 
   disableActivity: () ->
@@ -47,13 +50,16 @@ PeonGUI = class
       o.example = guiTmpls.accordian(tmplData)
       o.info = _taskObject.info.replace(codeRegex, '')
     catch error
+    taskJSON = []
     if _taskObject.config.indexOf('{') > -1
       o.configurations = prettyJSON(_taskObject.config)
+      taskJSON = JSON.parse(_taskObject.config)
     else
       o.configurations = guiTmpls.noConfigs({});
       o.cliArgs = '<input type="text" id="task-config" />'
+
     try
-      taskJSON = JSON.parse(_taskObject.config)
+
       if Object.keys(taskJSON).length > 1
         if $.inArray(Object.keys(taskJSON), 'options')
           taskJSONlist = Object.keys(taskJSON)
@@ -142,7 +148,20 @@ PeonGUI = class
       if $taskSelector and $taskSelector.val()
         taskSelectorVal = $taskSelector.val()
         that.currentTask.name = "#{that.currentTask.name}:#{taskSelectorVal}"
-      that.socket.send(that.currentTask.name)
+      # Collect flags.
+      cmd = {
+        command: 'runTask',
+        taskName: that.currentTask.name,
+        flags: []
+      }
+      if ($html.flagForce.prop('checked'))
+        cmd.flags.push('f')
+      if ($html.flagVerbose.prop('checked'))
+        cmd.flags.push('v')
+      if ($html.flagDebug.prop('checked'))
+        cmd.flags.push('d')
+
+      that.socket.send(JSON.stringify(cmd))
       that.disableActivity()
     )
     $html.killTask.on('click', (e) ->

@@ -75,6 +75,17 @@ body {
       display: inline-block;
       left: auto;
     }
+    #action-flags {
+      input,
+      label {
+        width: auto;
+        margin: 0;
+      }
+      input {
+        vertical-align: middle;
+        margin-left: 0;
+      }
+    }
   }
 }
 

@@ -49,6 +49,7 @@ class PeonWebSocket
     @removeTasks(['gui'])
     #@addConfigToTasks()
 
+  # @TODO Add support for configuration fetch.
   readTasks: () ->
     #grunt.log.writeln('grunt --help --gruntfile ' + @gruntFilePath)
     outBuffer = child_process.execSync(
@@ -67,7 +68,11 @@ class PeonWebSocket
         # TRIM to ensure we don't have a random number of spaces at the end.
         value = value.replace(/\s+$/, '')
         if ((result = pattern.exec(value)))
-          that.tasks[result[1]] = {name: result[1], config: "No Conf"}
+          that.tasks[result[1]] = {
+            name: result[1],
+            info: "",
+            config: "No configuration",
+          }
 
       if (value.indexOf('Available tasks') > -1)
         tasksArea = true
@@ -135,32 +140,50 @@ class PeonWebSocket
               port: that.projectPort
               action: "connected"
             ))
-          else if Object.keys(that.tasks).indexOf(msg) > -1
-            connection.send("Running Task: #{msg}")
-#            worker = child_process.spawn(
-#             'grunt --gruntfile ' + that.gruntFilePath,
-#              [msg],
-#              {cwd: path.dirname(that.gruntFilePath)}
-#            )
-            worker = child_process.exec(
-              'grunt --gruntfile ' + that.gruntFilePath + ' ' +  msg,
-              {
-                cwd: path.dirname(that.gruntFilePath)
-              }
-            )
-            that.workers.push(worker)
-            worker.stdout.on('data', (data) ->
-              if data
-                connection.send(data.toString())
-                grunt.log.writeln(data.toString())
-            )
-            worker.stdout.on('end', (data) ->
-              connection.sendUTF(JSON.stringify({ action: 'done'}))
-            )
-            worker.stderr.on('data', (stderr) ->
-              grunt.log.writeln stderr
-              if stderr then connection.send(stderr.toString())
-            )
+          else
+            # Extract command.
+            msg = JSON.parse(msg)
+            is_known_task = Object.keys(that.tasks).indexOf(msg.taskName) > -1
+            if msg.taskName? && is_known_task
+              connection.send("Running Task: #{msg.taskName}")
+  #            worker = child_process.spawn(
+  #             'grunt --gruntfile ' + that.gruntFilePath,
+  #              [msg],
+  #              {cwd: path.dirname(that.gruntFilePath)}
+  #            )
+              flags = ''
+              if msg.flags?
+                # Ensure flag is safe.
+                msg.flags.forEach((flag) ->
+                  if ((['d', 'f', 'v']).indexOf(flag) > -1)
+                    flags += ' -' + flag
+                )
+
+              command ='grunt --gruntfile ' +
+                  that.gruntFilePath +
+                  flags + ' ' +
+                  msg.taskName
+
+              connection.send("Command: #{command}")
+              worker = child_process.exec(
+                command,
+                {
+                  cwd: path.dirname(that.gruntFilePath)
+                }
+              )
+              that.workers.push(worker)
+              worker.stdout.on('data', (data) ->
+                if data
+                  connection.send(data.toString())
+                  grunt.log.writeln(data.toString())
+              )
+              worker.stdout.on('end', (data) ->
+                connection.sendUTF(JSON.stringify({ action: 'done'}))
+              )
+              worker.stderr.on('data', (stderr) ->
+                grunt.log.writeln stderr
+                if stderr then connection.send(stderr.toString())
+              )
       )
       connection.on('close', () ->
 

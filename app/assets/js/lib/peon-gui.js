@@ -17,7 +17,10 @@
       progressBar: $("#running"),
       output: $("#output"),
       notice: $("#notice"),
-      killAll: $("#kill-all")
+      killAll: $("#kill-all"),
+      flagForce: $("#action-flag-force"),
+      flagDebug: $("#action-flag-debug"),
+      flagVerbose: $("#action-flag-verbose")
     };
 
     _Class.prototype.running = false;
@@ -62,14 +65,15 @@
       } catch (_error) {
         error = _error;
       }
+      taskJSON = [];
       if (_taskObject.config.indexOf('{') > -1) {
         o.configurations = prettyJSON(_taskObject.config);
+        taskJSON = JSON.parse(_taskObject.config);
       } else {
         o.configurations = guiTmpls.noConfigs({});
         o.cliArgs = '<input type="text" id="task-config" />';
       }
       try {
-        taskJSON = JSON.parse(_taskObject.config);
         if (Object.keys(taskJSON).length > 1) {
           if ($.inArray(Object.keys(taskJSON), 'options')) {
             taskJSONlist = Object.keys(taskJSON);
@@ -178,14 +182,28 @@
         return $('html,body').scrollTop(0);
       });
       $html.runTask.on('click', function(e) {
-        var $taskSelector, taskSelectorVal;
+        var $taskSelector, cmd, taskSelectorVal;
         e.preventDefault();
         $taskSelector = $('#task-config');
         if ($taskSelector && $taskSelector.val()) {
           taskSelectorVal = $taskSelector.val();
           that.currentTask.name = "" + that.currentTask.name + ":" + taskSelectorVal;
         }
-        that.socket.send(that.currentTask.name);
+        cmd = {
+          command: 'runTask',
+          taskName: that.currentTask.name,
+          flags: []
+        };
+        if ($html.flagForce.prop('checked')) {
+          cmd.flags.push('f');
+        }
+        if ($html.flagVerbose.prop('checked')) {
+          cmd.flags.push('v');
+        }
+        if ($html.flagDebug.prop('checked')) {
+          cmd.flags.push('d');
+        }
+        that.socket.send(JSON.stringify(cmd));
         return that.disableActivity();
       });
       $html.killTask.on('click', function(e) {
